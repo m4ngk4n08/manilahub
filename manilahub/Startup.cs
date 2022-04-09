@@ -1,3 +1,10 @@
+using Autofac;
+using AutoMapper;
+using Dapper.FluentMap;
+using FluentValidation.AspNetCore;
+using manilahub.Authentication.Model;
+using manilahub.data.Map;
+using manilahub.Modules.Authentication.Profiles;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -7,6 +14,8 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
+using Newtonsoft.Json.Serialization;
+using System;
 using System.Text;
 
 namespace manilahub
@@ -23,13 +32,6 @@ namespace manilahub
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddControllersWithViews();
-            // In production, the Angular files will be served from this directory
-            services.AddSpaStaticFiles(configuration =>
-            {
-                configuration.RootPath = "ClientApp/dist";
-            });
-
             services.AddAuthentication(opt =>
             {
                 opt.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -49,6 +51,52 @@ namespace manilahub
                         IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("SecretKey@368123"))
                     };
                 });
+
+            services.AddCors(c =>
+            {
+                c.AddPolicy("AllowOrigin", options =>
+                    options
+                    .AllowAnyOrigin()
+                    .AllowAnyMethod()
+                    .AllowAnyHeader());
+            });
+
+            services.AddControllersWithViews();
+            //Json Serializer
+                //.AddNewtonsoftJson(options =>
+                //options.SerializerSettings.ReferenceLoopHandling = Newtonsoft
+                //.Json.ReferenceLoopHandling.Ignore)
+                //.AddNewtonsoftJson(options => options.SerializerSettings.ContractResolver
+                //= new DefaultContractResolver());
+            // In production, the Angular files will be served from this directory
+            services.AddSpaStaticFiles(configuration =>
+            {
+                configuration.RootPath = "ClientApp/dist";
+            });
+
+            FluentMapper.Initialize(opt =>
+            {
+                opt.AddMap(new RegisterMap());
+                opt.AddMap(new LoginMap());
+            });
+
+            services.AddAutoMapper(typeof(Startup));
+            var mapperConfig = new MapperConfiguration(cfg =>
+            {
+                cfg.AddProfile(new RegisterProfile());
+                cfg.AddProfile(new LoginProfile());
+            });
+            services.AddSingleton(mapperConfig.CreateMapper());
+
+            services.AddMvc()
+                .AddFluentValidation(fv => fv.RegisterValidatorsFromAssemblyContaining<RegisterValidator>());
+
+            services.AddControllers();
+        }
+
+        public void ConfigureContainer(ContainerBuilder builder)
+        {
+            builder.RegisterModule(new IOCContainer(Configuration));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -73,6 +121,13 @@ namespace manilahub
             }
 
             app.UseRouting();
+
+            app.UseCors(options =>
+                options
+                .AllowAnyOrigin()
+                .AllowAnyMethod()
+                .AllowAnyHeader()
+            );
 
             app.UseAuthentication();
             app.UseAuthorization();

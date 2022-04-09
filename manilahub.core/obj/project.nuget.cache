@@ -1,8 +1,15 @@
 {
   "version": 2,
-  "dgSpecHash": "NNzDKZiPw85vnGc/9HrHnXadmIdDiJUdoOzYd5sHWKxWSTgCaNXN82TjAE9Dxem/ZF/nqmDtDBq9RlceNmgnvQ==",
+  "dgSpecHash": "0n9gBslkaEX2DMtiAea7qK45SP6g78/pkzncoq3RP3UArLzTkoB03rF1QwH+mOTrQ2a8CEyhLhZDUNT2/w1hWA==",
   "success": true,
   "projectFilePath": "C:\\Users\\Avaaaaaaaa\\source\\repos\\manilahub\\manilahub.core\\manilahub.core.csproj",
-  "expectedPackageFiles": [],
+  "expectedPackageFiles": [
+    "C:\\Users\\Avaaaaaaaa\\.nuget\\packages\\dapper\\2.0.30\\dapper.2.0.30.nupkg.sha512",
+    "C:\\Users\\Avaaaaaaaa\\.nuget\\packages\\dapper.contrib\\2.0.30\\dapper.contrib.2.0.30.nupkg.sha512",
+    "C:\\Users\\Avaaaaaaaa\\.nuget\\packages\\dapper.fluentmap\\2.0.0-beta1\\dapper.fluentmap.2.0.0-beta1.nupkg.sha512",
+    "C:\\Users\\Avaaaaaaaa\\.nuget\\packages\\microsoft.csharp\\4.6.0\\microsoft.csharp.4.6.0.nupkg.sha512",
+    "C:\\Users\\Avaaaaaaaa\\.nuget\\packages\\system.reflection.emit\\4.6.0\\system.reflection.emit.4.6.0.nupkg.sha512",
+    "C:\\Users\\Avaaaaaaaa\\.nuget\\packages\\system.reflection.emit.lightweight\\4.6.0\\system.reflection.emit.lightweight.4.6.0.nupkg.sha512"
+  ],
   "logs": []
 }

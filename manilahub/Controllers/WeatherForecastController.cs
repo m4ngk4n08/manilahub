@@ -8,7 +8,6 @@ using System.Threading.Tasks;
 
 namespace manilahub.Controllers
 {
-    [Authorize]
     [ApiController]
     [Route("[controller]")] 
     public class WeatherForecastController : ControllerBase
