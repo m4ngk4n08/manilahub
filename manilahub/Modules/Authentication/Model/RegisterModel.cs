@@ -15,6 +15,7 @@ namespace manilahub.Authentication.Model
         public string ContactNumber { get; set; }
         public int AgentId { get; set; }
         public double Balance { get; set; }
+
         public string ReferralCode { get; set; }
         public int Role { get; set; }
         public int Status { get; set; }

@@ -6,7 +6,7 @@ using System.Text;
 
 namespace manilahub.data.Map
 {
-    public class RegisterMap : EntityMappingBuilder<Register>
+    public class RegisterMap : EntityMappingBuilder<Player>
     {
         public RegisterMap()
         {

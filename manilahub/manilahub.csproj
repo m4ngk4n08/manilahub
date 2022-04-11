@@ -39,6 +39,14 @@
     <ProjectReference Include="..\manilahub.data\manilahub.data.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Modules\Dashboard\Model\" />
+    <Folder Include="Modules\Dashboard\Profiles\" />
+    <Folder Include="Modules\Transactions\Model\" />
+    <Folder Include="Modules\Transactions\Profile\" />
+    <Folder Include="Modules\User\Profile\" />
+  </ItemGroup>
+
   <Target Name="DebugEnsureNodeEnv" BeforeTargets="Build" Condition=" '$(Configuration)' == 'Debug' And !Exists('$(SpaRoot)node_modules') ">
     <!-- Ensure Node.js is installed -->
     <Exec Command="node --version" ContinueOnError="true">

@@ -9,30 +9,41 @@ namespace manilahub.core.Services
 {
     public class LoginService : ILoginService
     {
-        private readonly IRegisterRepository _registerRepository;
+        private readonly IPlayerService _playerService;
         private readonly ICryptographyService _cryptographyService;
 
         public LoginService(
-            IRegisterRepository registerRepository,
+            IPlayerService playerService,
             ICryptographyService cryptographyService)
         {
-            _registerRepository = registerRepository;
+            _playerService = playerService;
             _cryptographyService = cryptographyService;
         }
 
         public bool Login(Login model)
         {
-            var getDetails = _registerRepository.Get(model.Username);
-
-            if (getDetails != null)
+            try
             {
-                if (_cryptographyService.SHA512(model.Password).Equals(getDetails.Password))
-                {
-                    return true;
-                }
-            }
+                var getDetails = _playerService.Get(model.Username);
 
-            return false;
+                if (getDetails != null)
+                {
+                    if (_cryptographyService.SHA512(model.Password).Equals(getDetails.Password))
+                    {
+                        if (getDetails.Status != 1)
+                        {
+                            return true;
+                        }
+                    }
+                }
+
+                return false;
+            }
+            catch (Exception e)
+            {
+
+                throw e;
+            }
         }
     }
 }

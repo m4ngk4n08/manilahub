@@ -5,8 +5,11 @@ using System.Text;
 
 namespace manilahub.core.Services.IServices
 {
-    public interface IRegisterService
+    public interface ISessionService
     {
-        bool Register(Player model);
+        Session GetUserSession(string userId);
+        bool Insert(Session entity);
+
+        bool Logout(string username);
     }
 }

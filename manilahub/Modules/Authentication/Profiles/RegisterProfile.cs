@@ -9,7 +9,9 @@ namespace manilahub.Modules.Authentication.Profiles
     {
         public RegisterProfile()
         {
-            CreateMap<RegisterModel, Register>();
+            CreateMap<RegisterModel, Player>();
+            CreateMap<LoginModel, Login>();
+            CreateMap<PlayerModel, Player>();
         }
     }
 }

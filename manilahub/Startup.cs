@@ -4,6 +4,7 @@ using Dapper.FluentMap;
 using FluentValidation.AspNetCore;
 using manilahub.Authentication.Model;
 using manilahub.data.Map;
+using manilahub.Middleware;
 using manilahub.Modules.Authentication.Profiles;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
@@ -78,13 +79,13 @@ namespace manilahub
             {
                 opt.AddMap(new RegisterMap());
                 opt.AddMap(new LoginMap());
+                opt.AddMap(new SessionMap());
             });
 
             services.AddAutoMapper(typeof(Startup));
             var mapperConfig = new MapperConfiguration(cfg =>
             {
                 cfg.AddProfile(new RegisterProfile());
-                cfg.AddProfile(new LoginProfile());
             });
             services.AddSingleton(mapperConfig.CreateMapper());
 
@@ -131,6 +132,7 @@ namespace manilahub
 
             app.UseAuthentication();
             app.UseAuthorization();
+            //app.UseMiddleware<HubMiddleware>();
 
             app.UseEndpoints(endpoints =>
             {

@@ -7,10 +7,6 @@ namespace manilahub.data.Repository.IRepository
 {
     public interface IRegisterRepository
     {
-        string Get();
-
-        Register Get(string username);
-
-        bool Insert(Register entity);
+        bool Insert(Player entity);
     }
 }

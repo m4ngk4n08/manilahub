@@ -16,19 +16,7 @@ namespace manilahub.data.Repository
         {
             _dbConnection = dbConnection;
         }
-        public string Get()
-        {
-            return "hi";
-        }
-
-        public Register Get(string username)
-        {
-            string sql = @"select * from [dbo].users where UPPER(TRIM(username)) = UPPER(TRIM(@Username))";
-
-            return _dbConnection.QueryFirstOrDefault<Register>(sql, new { Username = username });
-        }
-
-        public bool Insert(Register entity)
+        public bool Insert(Player entity)
         {
             var sql = @"insert into [dbo].users (Username, Password, Contact_Number, Referral_Code)
                         values

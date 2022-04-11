@@ -12,34 +12,32 @@ namespace manilahub.core.Services
     {
         private readonly IRegisterRepository _registerRepository;
         private readonly ICryptographyService _cryptographyService;
+        private readonly IPlayerRepository _playerRepository;
 
         public RegisterService(
             IRegisterRepository registerRepository,
-            ICryptographyService cryptographyService)
+            ICryptographyService cryptographyService,
+            IPlayerRepository playerRepository)
         {
             _registerRepository = registerRepository;
             _cryptographyService = cryptographyService;
+            _playerRepository = playerRepository;
         }
 
-        public string Get()
-        {
-            return _registerRepository.Get();
-        }
-
-        public bool Register(Register model)
+        public bool Register(Player model)
         {
             try
             {
-                var user = _registerRepository.Get(model.Username);
+                var user = _playerRepository.Get(model.Username);
 
                 if (user is null)
                 {
-
-                    var newModel = new Register
+                    var newModel = new Player
                     {
                         Username = model.Username,
                         Password = _cryptographyService.SHA512(model.Password),
-                        ContactNumber = model.ContactNumber
+                        ContactNumber = model.ContactNumber,
+                        ReferralCode = model.ReferralCode
                     };
 
                     return _registerRepository.Insert(newModel);

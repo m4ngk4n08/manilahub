@@ -28,10 +28,14 @@ namespace manilahub
             builder.RegisterType<RegisterService>().As<IRegisterService>();
             builder.RegisterType<LoginService>().As<ILoginService>();
             builder.RegisterType<CryptographyService>().As<ICryptographyService>();
+            builder.RegisterType<PlayerService>().As<IPlayerService>();
+            builder.RegisterType<SessionService>().As<ISessionService>();
 
 
             builder.RegisterType<RegisterRepository>().As<IRegisterRepository>();
             builder.RegisterType<LoginRepository>().As<ILoginRepository>();
+            builder.RegisterType<PlayerRepository>().As<IPlayerRepository>();
+            builder.RegisterType<SessionRepository>().As<ISessionRepository>();
 
             var connectionString = _configuration.GetSection("ConnectionString:APIConnection").Value;
             builder.Register<IDbConnection>(ctx => new SqlConnection(connectionString));

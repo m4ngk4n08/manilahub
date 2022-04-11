@@ -15,33 +15,41 @@ namespace manilahub.Authentication.Controllers
     public class RegisterController : Controller
     {
         private readonly IRegisterService _registerService;
+        private readonly IPlayerService _playerService;
         private readonly IMapper _mapper;
 
-        public RegisterController(IRegisterService registerService,
+        public RegisterController(
+            IRegisterService registerService,
+            IPlayerService playerService,
             IMapper mapper)
         {
             _registerService = registerService;
+            _playerService = playerService;
             _mapper = mapper;
         }
         public IActionResult Index()
         {
-            return Content(_registerService.Get());
+            _playerService.Get(string.Empty);
+            return Content("");
         }
 
         [HttpPost]
         public IActionResult Register([FromBody]RegisterModel model,[FromQuery] string refId)
         {
+
             if (!ModelState.IsValid)
             {
                 return BadRequest();
             }
 
-            if (refId != string.Empty)
+            if (refId == string.Empty)
             {
-                model.ReferralCode = refId;
+                return BadRequest("Referral code cannot be empty");
             }
 
-            var map = _mapper.Map<Register>(model);
+            model.ReferralCode = refId;
+
+            var map = _mapper.Map<Player>(model);
 
             if (_registerService.Register(map))
             {

@@ -11,4 +11,9 @@ namespace manilahub.Authentication.Model
 
         public string Password { get; set; }
     }
+
+    public class StaticModels
+    {
+        public static string Username { get; set; }
+    }
 }
