@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace manilahub.core.Services
 {
@@ -12,42 +13,46 @@ namespace manilahub.core.Services
     {
         private readonly ISessionRepository _sessionrepository;
         private readonly IRegisterRepository _registerRepository;
-        private readonly IPlayerRepository _playerRepository;
+        private readonly IUserRepository _playerRepository;
 
         public SessionService(
             ISessionRepository sessionrepository,
             IRegisterRepository registerRepository,
-            IPlayerRepository playerRepository)
+            IUserRepository playerRepository)
         {
             _sessionrepository = sessionrepository;
             _registerRepository = registerRepository;
             _playerRepository = playerRepository;
         }
 
-        public Session GetUserSession(string userId)
+        public async Task<Session> GetUserSession(string userId)
         {
-            var returnInfo = _sessionrepository.GetAllUserSession(userId).OrderByDescending(j => j.Expiration).FirstOrDefault();
-            return returnInfo;
+            var returnInfo = await _sessionrepository.GetAllUserSession(userId);
+                
+            
+            return returnInfo.ToList()
+                .OrderByDescending(j => j.Expiration)
+                .FirstOrDefault();
         }
 
-        public bool Insert(Session entity)
+        public async Task<bool> Insert(Session entity)
         {
-            return _sessionrepository.Insert(entity);
+            return await _sessionrepository.Insert(entity);
         }
 
-        public bool Logout(string username)
+        public async Task<bool> Logout(string username)
         {
-            var userDetails = _playerRepository.Get(username);
-            var sessionDeatils = _sessionrepository.GetAllUserSession(userDetails.UserId.ToString()).OrderByDescending(j => j.Expiration).FirstOrDefault();
-
-            if (sessionDeatils != null)
+            var userDetails = await _playerRepository.Get(username);
+            var sessionDeatils = await _sessionrepository.GetAllUserSession(userDetails.UserId.ToString());                
+            var session = sessionDeatils.OrderByDescending(j => j.Expiration).FirstOrDefault();
+            if (session != null)
             {
                 var sessionDTO = new Session
                 {
-                    SessionId = sessionDeatils.SessionId
+                    SessionId = session.SessionId
                 };
 
-                return _sessionrepository.Logout(sessionDTO);
+                return await _sessionrepository.Logout(sessionDTO);
             }
 
             return false;

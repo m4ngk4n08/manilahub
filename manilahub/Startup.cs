@@ -4,28 +4,28 @@ using Dapper.FluentMap;
 using FluentValidation.AspNetCore;
 using manilahub.Authentication.Model;
 using manilahub.data.Map;
-using manilahub.Middleware;
 using manilahub.Modules.Authentication.Profiles;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.SpaServices.AngularCli;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
-using Newtonsoft.Json.Serialization;
-using System;
 using System.Text;
 
 namespace manilahub
 {
     public class Startup
     {
-        public Startup(IConfiguration configuration)
+        private readonly IWebHostEnvironment _hostingEnvironment;
+
+        public Startup(IConfiguration configuration,
+            IWebHostEnvironment hostingEnvironment)
         {
             Configuration = configuration;
+            _hostingEnvironment = hostingEnvironment;
         }
 
         public IConfiguration Configuration { get; }
@@ -33,6 +33,15 @@ namespace manilahub
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            var serverName = string.Empty;
+            if (_hostingEnvironment.IsDevelopment())
+            {
+                serverName = "https://localhost:5001";
+            }
+            else
+            {
+                serverName = "http://www.manilahub.somee.com";
+            }
             services.AddAuthentication(opt =>
             {
                 opt.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -47,8 +56,8 @@ namespace manilahub
                         ValidateLifetime = true,
                         ValidateIssuerSigningKey = true,
 
-                        ValidIssuer = "https://localhost:5001",
-                        ValidAudience = "https://localhost:5001",
+                        ValidIssuer = serverName,
+                        ValidAudience = serverName,
                         IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("SecretKey@368123"))
                     };
                 });
@@ -80,6 +89,9 @@ namespace manilahub
                 opt.AddMap(new RegisterMap());
                 opt.AddMap(new LoginMap());
                 opt.AddMap(new SessionMap());
+                opt.AddMap(new AgentMap());
+                opt.AddMap(new TransactionMap());
+                opt.AddMap(new TransactionRMap());
             });
 
             services.AddAutoMapper(typeof(Startup));

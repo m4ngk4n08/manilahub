@@ -1,9 +1,11 @@
 ﻿using manilahub.core.Services.IServices;
 using manilahub.data.Entity;
+using manilahub.data.Enum;
 using manilahub.data.Repository.IRepository;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace manilahub.core.Services
 {
@@ -20,17 +22,17 @@ namespace manilahub.core.Services
             _cryptographyService = cryptographyService;
         }
 
-        public bool Login(Login model)
+        public async Task<bool> Login(Login model)
         {
             try
             {
-                var getDetails = _playerService.Get(model.Username);
+                var getDetails = await _playerService.Get(model.Username);
 
                 if (getDetails != null)
                 {
                     if (_cryptographyService.SHA512(model.Password).Equals(getDetails.Password))
                     {
-                        if (getDetails.Status != 1)
+                        if (getDetails.Status != StatusEnum.Pending)
                         {
                             return true;
                         }

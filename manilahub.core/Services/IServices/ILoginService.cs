@@ -2,11 +2,12 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace manilahub.core.Services.IServices
 {
     public interface ILoginService
     {
-        bool Login(Login model);
+        Task<bool> Login(Login model);
     }
 }

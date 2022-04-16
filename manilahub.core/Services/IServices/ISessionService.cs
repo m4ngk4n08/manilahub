@@ -2,14 +2,15 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace manilahub.core.Services.IServices
 {
     public interface ISessionService
     {
-        Session GetUserSession(string userId);
-        bool Insert(Session entity);
+        Task<Session> GetUserSession(string userId);
+        Task<bool> Insert(Session entity);
 
-        bool Logout(string username);
+        Task<bool> Logout(string username);
     }
 }

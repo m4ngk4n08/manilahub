@@ -18,7 +18,11 @@ namespace manilahub.data.Repository
         }
         public bool Insert(Player entity)
         {
-            var sql = @"insert into [dbo].users (Username, Password, Contact_Number, Referral_Code)
+            var sql = @"insert into [dbo].users 
+                                (Username, 
+                                Password, 
+                                Contact_Number, 
+                                Referral_Code)
                         values
                                (@Username, 
                                @Password,

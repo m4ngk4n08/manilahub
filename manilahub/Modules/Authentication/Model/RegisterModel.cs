@@ -25,8 +25,18 @@ namespace manilahub.Authentication.Model
     {
         public RegisterValidator()
         {
-            RuleFor(j => j.Username).NotEmpty();
-            RuleFor(j => j.Password).Matches(j => j.ConfirmPassword).NotEmpty();
+            RuleFor(j => j.Username).NotEmpty()
+                .MaximumLength(10)
+                .MinimumLength(5)
+                .Matches("^[a-zA-Z0-9]*$");
+            RuleFor(j => j.Password)
+                .Matches(j => j.ConfirmPassword)
+                .WithMessage("Password did not match.")
+                .NotEmpty();
+            RuleFor(j => j.ConfirmPassword)
+                .Matches(j => j.Password)
+                .WithMessage("Password did not match.")
+                .NotEmpty();
             RuleFor(j => j.ContactNumber).NotEmpty();
         }
     }

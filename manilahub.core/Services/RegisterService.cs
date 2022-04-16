@@ -12,12 +12,12 @@ namespace manilahub.core.Services
     {
         private readonly IRegisterRepository _registerRepository;
         private readonly ICryptographyService _cryptographyService;
-        private readonly IPlayerRepository _playerRepository;
+        private readonly IUserRepository _playerRepository;
 
         public RegisterService(
             IRegisterRepository registerRepository,
             ICryptographyService cryptographyService,
-            IPlayerRepository playerRepository)
+            IUserRepository playerRepository)
         {
             _registerRepository = registerRepository;
             _cryptographyService = cryptographyService;

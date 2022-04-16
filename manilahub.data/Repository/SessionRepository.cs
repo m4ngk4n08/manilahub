@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace manilahub.data.Repository
 {
@@ -17,14 +18,14 @@ namespace manilahub.data.Repository
             _dbConnection = dbConnection;
         }
 
-        public IEnumerable<Session> GetAllUserSession(string userId)
+        public async Task<IEnumerable<Session>> GetAllUserSession(string userId)
         {
             var sql = @"select * from [dbo].Session where UserId = @userId and IsActive = 1";
 
-            return _dbConnection.Query<Session>(sql, new { UserId = userId });
+            return await _dbConnection.QueryAsync<Session>(sql, new { UserId = userId });
         }
 
-        public bool Insert(Session entity)
+        public async Task<bool> Insert(Session entity)
         {
             var sql = @"insert into [dbo].session 
                                 (userid, bearer_token, expiration) 
@@ -35,31 +36,31 @@ namespace manilahub.data.Repository
             parameters.AddDynamicParams(entity);
             parameters.Output(entity, j => j.UserId);
 
-            var returnVal = _dbConnection.Execute(sql, parameters);
+            var returnVal = await _dbConnection.ExecuteAsync(sql, parameters);
 
             return returnVal is 0 ? false : true;
         }
 
-        public bool Logout(Session entity)
+        public async Task<bool> Logout(Session entity)
         {
             var sql = @"update [dbo].session set IsActive = 0 where SessionId = @SessionId";
 
             var parameters = new DynamicParameters();
             parameters.AddDynamicParams(entity);
 
-            int rowsAffected = _dbConnection.Execute(sql, parameters);
+            int rowsAffected = await _dbConnection.ExecuteAsync(sql, parameters);
 
             return (rowsAffected > 0) ? true : false;
         }
 
-        public bool UpdateSession(Session entity)
+        public async Task<bool> UpdateSession(Session entity)
         {
             var sql = @"update [dbo].session set expiration = cast(@expiration as datetime) where SessionId = @SessionId";
 
             var parameters = new DynamicParameters();
             parameters.AddDynamicParams(entity);
 
-            int rowsAffected = _dbConnection.Execute(sql, parameters);
+            int rowsAffected = await _dbConnection.ExecuteAsync(sql, parameters);
 
             return (rowsAffected > 0) ? true : false;
         }

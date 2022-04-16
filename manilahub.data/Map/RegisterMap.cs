@@ -12,6 +12,8 @@ namespace manilahub.data.Map
         {
             Map(j => j.UserId)
                 .ToColumn("UserId");
+            Map(j => j.AgentId)
+                .ToColumn("Agent_Id");
             Map(j => j.Username)
                 .ToColumn("Username");
             Map(j => j.Password)

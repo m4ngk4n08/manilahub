@@ -1,35 +1,58 @@
 ﻿using manilahub.core.Services.IServices;
 using manilahub.data.Entity;
+using manilahub.data.Enum;
 using manilahub.data.Repository.IRepository;
+using Microsoft.AspNetCore.Http;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace manilahub.core.Services
 {
     public class PlayerService : IPlayerService
     {
-        private readonly IPlayerRepository _playerRepository;
+        private readonly IUserRepository _userRepository;
+        private readonly IHttpContextAccessor _httpContextAccessor;
 
-        public PlayerService(IPlayerRepository playerRepository)
+        public PlayerService(
+            IUserRepository userRepository,
+            IHttpContextAccessor httpContextAccessor)
         {
-            _playerRepository = playerRepository;
+            _userRepository = userRepository;
+            _httpContextAccessor = httpContextAccessor;
         }
 
-        public Player Get(string username)
+        public async Task<Player> Get(string username)
         {
-            return _playerRepository.Get(username);
+            return await _userRepository.Get(username);
         }
 
         public IEnumerable<Player> GetPendingStatus()
         {
-            return _playerRepository.GetAll().Where(j => j.Status is 1);
+            return _userRepository.GetAll().Where(j => j.Status is StatusEnum.Pending);
         }
 
-        public Player UpdateStatus(Player model)
+        public async Task<Player> UpdateStatus(Player model)
         {
-            return _playerRepository.UpdatePlayerStatus(model);
+            var userInfo = await _userRepository.Get(model.Username);
+            var getCurrentUser = await _userRepository.Get(_httpContextAccessor.HttpContext.User.Identity.Name);
+
+            if (getCurrentUser.ReferralCode.Equals(userInfo.ReferralCode))
+            {
+
+                var player = new Player
+                {
+                    UserId = userInfo.UserId,
+                    Status = StatusEnum.Approved,
+                    Role = RoleEnum.PLAYER
+                };
+
+                return await _userRepository.UpdatePlayerStatus(player);
+            }
+
+            return null;
         }
     }
 }

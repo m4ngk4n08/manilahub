@@ -2,14 +2,15 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace manilahub.core.Services.IServices
 {
     public interface IPlayerService
     {
-        Player Get(string username);
+        Task<Player> Get(string username);
         IEnumerable<Player> GetPendingStatus();
 
-        Player UpdateStatus(Player model);
+        Task<Player> UpdateStatus(Player model);
     }
 }

@@ -2,6 +2,7 @@
 using manilahub.core.Services;
 using manilahub.core.Services.IServices;
 using manilahub.data.Entity;
+using manilahub.data.Enum;
 using manilahub.data.Repository;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -18,43 +19,58 @@ namespace manilahub.Middleware
 {
     public class HubMiddleware : AuthorizeAttribute, IAuthorizationFilter
     {
-        public void OnAuthorization(AuthorizationFilterContext context)
+        public async void OnAuthorization(AuthorizationFilterContext context)
         {
             try
             {
+                var connectionString = /*@"Server=manilahub.mssql.somee.com;packet size=4096;user id=angelodavales_SQLLogin_1;pwd=ks4boan88q;data source=manilahub.mssql.somee.com;persist security info=False;initial catalog=manilahub";*/
+                "Server=TRESKALAMARESDO;Database=manilahub;user Id=ninjaliit;Password=kanor143;";
                 var username = context.HttpContext.User.Identity.Name;
                 if (!string.IsNullOrEmpty(username))
                 {
-                    using (IDbConnection db = new SqlConnection("Server=TRESKALAMARESDO;Database=manilahub;User Id=ninjaliit;Password=kanor143;"))
+                    using (IDbConnection db = new SqlConnection(connectionString))
                     {
                         var _session = new SessionRepository(db);
-                        var _player = new PlayerRepository(db);
+                        var _player = new UserRepository(db);
 
-                        var userInfo = _player.Get(username);
-                        var userSessionInfo = _session.GetAllUserSession(userInfo.UserId.ToString()).OrderByDescending(j => j.Expiration).FirstOrDefault();
+                        var userInfo = await _player.Get(username);
 
-                        if (userSessionInfo.Expiration < DateTime.Now)
+                        if (userInfo.Role != RoleEnum.PLAYER)
                         {
-                            var seesh = new Session
+                            var userSessionInfo = await _session.GetAllUserSession(userInfo.UserId.ToString());
+                            var userSession = userSessionInfo.OrderByDescending(j => j.Expiration).FirstOrDefault();
+
+                            if (userSession.Expiration < DateTime.Now)
                             {
-                                SessionId = userSessionInfo.SessionId
-                            };
-                            _session.Logout(seesh);
-                            context.Result = new UnauthorizedResult();
+                                var seesh = new Session
+                                {
+                                    SessionId = userSession.SessionId
+                                };
+                                await _session.Logout(seesh);
+                                context.Result = new UnauthorizedResult();
+                            }
+                            else
+                            {
+                                var seesh = new Session
+                                {
+                                    SessionId = userSession.SessionId,
+                                    Expiration = DateTime.Now.AddMinutes(20)
+                                };
+                                await _session.UpdateSession(seesh);
+                            }
                         }
                         else
                         {
-                            var seesh = new Session
-                            {
-                                SessionId = userSessionInfo.SessionId,
-                                Expiration = DateTime.Now.AddMinutes(20)
-                            };
-                            _session.UpdateSession(seesh);
+                            context.Result = new UnauthorizedResult();
                         }
 
                         db.Close();
                         db.Dispose();
                     }
+                }
+                else
+                {
+                    context.Result = new UnauthorizedResult();
                 }
             }
             catch (Exception ex)

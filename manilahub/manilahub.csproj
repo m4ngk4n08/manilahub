@@ -40,9 +40,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="Modules\Admin\Profile\" />
     <Folder Include="Modules\Dashboard\Model\" />
     <Folder Include="Modules\Dashboard\Profiles\" />
-    <Folder Include="Modules\Transactions\Model\" />
     <Folder Include="Modules\Transactions\Profile\" />
     <Folder Include="Modules\User\Profile\" />
   </ItemGroup>
