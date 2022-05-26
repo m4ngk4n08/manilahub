@@ -23,8 +23,7 @@ namespace manilahub.Middleware
         {
             try
             {
-                var connectionString = /*@"Server=manilahub.mssql.somee.com;packet size=4096;user id=angelodavales_SQLLogin_1;pwd=ks4boan88q;data source=manilahub.mssql.somee.com;persist security info=False;initial catalog=manilahub";*/
-                "Server=TRESKALAMARESDO;Database=manilahub;user Id=ninjaliit;Password=kanor143;";
+               
                 var username = context.HttpContext.User.Identity.Name;
                 if (!string.IsNullOrEmpty(username))
                 {
