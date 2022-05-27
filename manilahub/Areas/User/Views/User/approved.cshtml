@@ -1,0 +1,204 @@
+﻿@{
+    Layout = "_Layout";
+}
+<style>
+    .v-enter-active,
+    .v-leave-active {
+        transition: opacity 0.5s ease;
+    }
+
+    .v-enter-from,
+    .v-leave-to {
+        opacity: 0;
+    }
+</style>
+<div id="app">
+    <Transition>
+
+        <div class="alert alert-danger" v-if="showAlert">
+            <a href="#" class="close" data-dismiss="alert" aria-label="close" v-on:click="showAlert = false">&times;</a>
+            <strong>{{errMsg}}</strong> 
+        </div>
+    </Transition>
+    <input class="form-control" v-model="filter" type="text" placeholder="Search.." style="width:150px; margin-bottom:10px;">
+    <table class="table table-hover" style="background-color: #495057; font-size: smaller; color: #fff; border: 1px; ">
+        <thead>
+            <tr style="text-align:center;">
+                <th scope="col">Info</th>
+                <th scope="col">Current Points</th>
+                <th scope="col">Your Commission</th>
+                <th scope="col">Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr v-for="(item, index) in filteredRows" :key="item.userId">
+                <th>
+                    <ul style="text-align: left; font-weight: normal; list-style:none; margin:0; padding:0;">
+                        <li><i class="far fa-user-circle"></i> <strong>{{item.username}}</strong> </li>
+                        <li><i class="fas fa-phone"></i> <strong>{{item.contactNumber}}</strong>  </li>
+                        <li><i class="fas fa-child"></i> <strong>{{item.role}}</strong> </li>
+                        <li><i class="fas fa-info"></i> <strong>{{item.status}}</strong> </li>
+                    </ul>
+                </th>
+                <th>
+                    <ul style="text-align: left; font-weight: normal; list-style:none; margin:0; padding:0;">
+                        <li>
+                            Balance:
+                            <ul>
+                                <li><strong>{{item.balance}}</strong></li>
+                            </ul>
+                        </li>
+                        <li>
+                            Commission:
+                            <ul>
+                                <li><strong>{{item.commission}}</strong></li>
+                            </ul>
+                        </li>
+                    </ul>
+                </th>
+                <th></th>
+                <td style="text-align:center;">
+                    <select class="form-select form-select-lg mb-3" @@change="selectOnChange($event, item.userId, item.username)">
+                        <option selected>Open this select menu</option>
+                        <option value="1">Agent</option>
+                        <option value="5">Player</option>
+                    </select>
+                    <a class="btn-primary btn-sm" data-toggle="modal" data-target="#staticBackdrop" style="cursor:pointer;">
+                        Submit
+                    </a>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <!-- Modal -->
+    <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="staticBackdropLabel"><span style="color: black;">Promote</span></h5>
+                    <button type="button" class="btn-bs-close" data-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p style="color: black;">Are you sure you want to promote <span style="color:red;">{{ un }}</span>?</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-danger btn-sm" data-dismiss="modal">Close</button>
+                    <button data-dismiss="modal" v-on:click="approved()" class="btn btn-primary btn-sm">Confirm</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    var myObject = new Vue({
+        el: '#app',
+        data: {
+            userData: [],
+            rows: [],
+            m: [],
+            filter: '',
+            un: '',
+            showAlert: false,
+            timer: '',
+            errMsg: ''
+        },
+        created() {
+            this.refreshData();
+        },
+        methods: {
+            refreshData() {
+                axios.get(variables.API_URL + "user/get-approved")
+                    .then((response) => {
+                        this.userData = response.data;
+
+                        this.userData.forEach((value, index) => {
+                            switch (value.status) {
+                                case 1:
+                                    value.status = "Pending";
+                                    break;
+                                case 2:
+                                    value.status = "Approved";
+                                    break;
+                                case 2:
+                                    value.status = "Decline";
+                                    break;
+                                default:
+                            }
+
+                            switch (value.role) {
+                                case 1:
+                                    value.role = "Gold"
+                                    break;
+                                case 2:
+                                    value.role = "Master"
+                                    break;
+                                case 3:
+                                    value.role = "Subop"
+                                    break;
+                                case 4:
+                                    value.role = "Admin"
+                                    break;
+                                case 5:
+                                    value.role = "Player"
+                                    break;
+                                default:
+                            }
+                            value.commission = value.commission.toFixed(2);
+                        });
+                    }).catch(error => console.log(error))
+            },
+            highlightMatches(text) {
+                const matchExist = text.toLowerCase().includes(this.filter.toLowerCase());
+
+                if (!matchExist) return text;
+
+                const re = new RegExp(this.filter, 'ig');
+                return text.replace(re, matchedText => `<string>${matchedText}</strong`);
+            },
+            selectOnChange(e, id, un) {
+                this.m.userid = id;
+                this.m.role = e.target.value;
+                this.un = un;
+            },
+            approved() {
+                var self = this;
+                axios.post(variables.API_URL + "user/promote", {
+                    UserId: parseInt(this.m.userid),
+                    Role: parseInt(this.m.role),
+                    Username: this.un,
+                })
+                    .then(function (response) {
+                        Vue.nextTick(() => {
+                            this.refreshData();
+                        })
+                    }).catch(function (error) {
+                        self.$nextTick(function () {
+                            this.errMsg = error.response.data;
+                            console.log(error.response.data);
+                            self.showAlert = true;
+                        })
+                    });
+            },
+            cancelAutoUpdate() {
+                clearInterval(this.timer); alert();
+            },
+        },
+        computed: {
+            filteredRows() {
+                return this.userData.filter(row => {
+                    const username = row.username.toLowerCase();
+                    const searchTerm = this.filter.toLowerCase();
+                    return username.includes(searchTerm);
+                })
+            },
+        },
+        mounted: function() {
+            this.refreshData();
+        },
+        beforeUnmount() {
+            alert();
+            this.cancelAutoUpdate();
+        },
+    })
+</script>

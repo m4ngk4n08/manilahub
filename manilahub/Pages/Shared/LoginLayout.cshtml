@@ -1,0 +1,33 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - manilahub</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    @*<link rel="stylesheet" href="~/css/site.css" />*@
+    <link rel="stylesheet" href="~/css/login.css" asp-append-version="true"/>
+    <link rel="stylesheet" href="~/css/w3.css" asp-append-version="true"/>
+
+    <!-- sidebar -->
+    <!-- Bootstrap core CSS -->
+    <link href="~/lib/bootstrap/dist/css/bootstrap-reboot.min.css" rel="stylesheet">
+    <!-- Custom styles for this template -->
+    <link href="~/css/sidebars.css" rel="stylesheet">
+    <!-- end sidebar -->
+</head>
+<body>
+    <header>
+    </header>
+        @RenderBody()
+
+    <footer class="border-top footer text-muted">
+    </footer>
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+
+    @RenderSection("Scripts", required: false)
+</body>
+</html>

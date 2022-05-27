@@ -1,0 +1,40 @@
+﻿
+@model manilahub.Authentication.Model.LoginModel
+
+@{
+    ViewData["Title"] = "index";
+    Layout = "LoginLayout";
+}
+<div class="container-fluid bg">
+    <div class="row">
+        <div class="col-md-4 col-sm-4 col-xs-12">
+        </div>
+        <div class="col-md-4 col-sm-4 col-xs-12">
+            <!--form start-->
+            <form method="post" class="form-container" asp-controller="auth" asp-action="login" asp-route-returnUrl="@Context.Request.Path" autocomplete="off" asp-antiforgery="true">
+                <p class="hubfont">Manilahub</p>
+                <div class="form-group">
+                    <label asp-for="Username">Username</label>
+                    <input asp-for="Username" type="text" class="form-control" id="username" placeholder="username" />
+                    <span asp-validation-for="Username" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="Password">Password</label>
+                    <input asp-for="Password"type="password" class="form-control" id="password" placeholder="password" />
+                    <span asp-validation-for="Password" class="text-danger"></span>
+                </div>
+                <div class="checkbox">
+                    <label>
+                        <input type="checkbox" /> Remember me
+                    </label>
+                </div>
+                <button type="submit" class="btn btn-success btn-block">Submit</button>
+                <span class="reg"><a href="#">Register here</a></span>
+            </form>
+            
+        </div>
+        <div class="col-md-4 col-sm-4 col-xs-12">
+            
+        </div>
+    </div>
+</div>

@@ -1,0 +1,48 @@
+﻿.bg {
+    background: url('../images/1991586.jpg');
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    font-family: "Open Sans", sans-serif;
+    height: 100vh;
+}
+
+@media only screen and (orientation:portrait) {
+    #wrapper {
+        display: none;
+    }
+
+    #warning-message {
+        display: block;
+        color: white;
+    }
+
+    .bg {
+        background: url('../images/1991586.jpg') no-repeat center center fixed;
+        background-size: cover;
+        height: 100vh;
+    }
+}
+.form-container {
+    padding: 30px 40px 60px 40px;
+    margin-top: 20vh;
+    -webkit-box-shadow: 0px 0px 18px 8px rgba(0,0,0,0.65);
+    -moz-box-shadow: 0px 0px 18px 8px rgba(0,0,0,0.65);
+    box-shadow: 0px 0px 18px 8px rgba(0,0,0,0.65);
+}
+span .reg {
+    text-align: left;
+}
+.hubfont {
+    font-family: "Comic Sans MS", cursive, sans-serif;
+    font-size: 27px;
+    letter-spacing: -1.2px;
+    word-spacing: -1.2px;
+    color: #000000;
+    font-weight: 700;
+    text-decoration: none;
+    font-style: normal;
+    font-variant: normal;
+    text-transform: capitalize;
+    text-align: center;
+}

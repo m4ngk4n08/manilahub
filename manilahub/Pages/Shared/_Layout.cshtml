@@ -1,0 +1,55 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - manilahub</title>
+    <script src="~/vue/axios.js"></script>
+    <script src="~/vue/vue.js"></script>
+    <script src="~/vue/variable.js"></script>
+
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.css" />
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" />
+    <link rel="stylesheet" href="~/css/login.css" />
+    <link rel="stylesheet" href="~/css/w3.css" />
+    <link rel="stylesheet" href="~/css/header.css" />
+
+    <!-- sidebar -->
+    <!-- Bootstrap core CSS -->
+    <link href="~/lib/bootstrap/dist/css/bootstrap-reboot.min.css" rel="stylesheet">
+    <!-- Custom styles for this template -->
+    <link href="~/css/sidebars.css" rel="stylesheet">
+    <!-- end sidebar -->
+</head>
+<body>
+    <div id="header" class="col-lg-12">
+        <partial name="header" />
+        <div id="main">
+            <button id="openNav" class="w3-button" onclick="w3_open()">&#9776;</button>
+        </div>
+    </div>
+    <div class="row">
+        <div id="sideLeft" class="col-lg-2">
+            <partial name="Sidebar" />
+        </div>
+        <div id="body" class="col-lg-8">
+            <br /><br /><br />
+            @RenderBody()
+        </div>
+        <div id="sideRight" class="col-lg-2">@*Side Right*@</div>
+    </div>
+
+
+    <script src="~/lib/jquery/dist/jquery.js"></script>
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+
+    <script src="~/js/site.js" asp-append-version="true"></script>
+
+    @RenderSection("Scripts", required: false)
+</body>
+</html>

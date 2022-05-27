@@ -1,0 +1,103 @@
+﻿@model IEnumerable<manilahub.Modules.User.Model.FightModel>;
+
+@{
+    Layout = "_Layout";
+}
+
+<div id="app">
+    <div v-if="savingSuccess" class="alert alert-success" role="alert">
+        <i class="fa fa-check"></i> User successfuly added.
+    </div>
+    <table class="table table-hover" style="font-size:smaller; color:#fff; text-align:center;">
+        <thead>
+            <tr>
+                <th scope="col">Username</th>
+                <th scope="col">Contact#</th>
+                <th scope="col">Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr v-for="item in userData" :key="item.userId">
+                <th>{{item.username}}</th>
+                <th>{{item.contactNumber}}</th>
+                <td>
+                    <a class="btn btn-primary btn-sm" data-toggle="modal" data-target="#staticBackdrop" v-on:click="setId(item.userId)">
+                        Approve
+                    </a>
+                    &nbsp;
+                    <a class="btn btn-danger btn-sm">
+                        Decline
+                    </a>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <!-- Modal -->
+    <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="staticBackdropLabel"><p style="color: black;">Promote</p></h5>
+                    <button type="button" class="btn-bs-close" data-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p style="color: black;">Are you sure you want to proceed?</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-danger btn-sm" data-dismiss="modal">Close</button>
+                    <button data-dismiss="modal" v-on:click="approve()" class="btn btn-primary btn-sm">Confirm</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    var myObject = new Vue({
+        el: '#app',
+        data: {
+            userData: [],
+            id: '',
+            savingSuccess: false,
+            timer: ''
+        },
+        created() {
+            //this.refreshData();
+            //this.timer = setInterval(this.refreshData, 2000)
+            const self = this;
+
+            self.$nextTick(function () {
+                this.refreshData();
+            })
+        },
+        methods: {
+            refreshData() {
+                axios.get(variables.API_URL + "user/userlist")
+                    .then((response) => {
+                        this.userData = response.data;
+                        console.log(this.userData);
+                    }).catch(error => console.log(error))
+            },
+            approve: function () {
+                axios.post(variables.API_URL + "user/" + this.id + "/approve")
+                    .then(function (response) {
+                        this.savingSuccess = true
+                    })
+                    .catch(function (error) {
+                        this.savingSuccess = true
+                    });
+            },
+            setId: function (id) {
+                return this.id = id;
+            },
+            cancelAutoUpdate() {
+                clearInterval(this.timer);
+            },
+        },
+        beforeDestroy() {
+            alert();
+            this.cancelAutoUpdate();
+        }
+    })
+</script>
+
+
