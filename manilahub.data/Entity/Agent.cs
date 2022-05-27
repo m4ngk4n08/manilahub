@@ -4,9 +4,9 @@ namespace manilahub.data.Entity
 {
     public class Agent
     {
-        public string AgentId { get; set; }
+        public int AgentId { get; set; }
         public string ReferralCode { get; set; }
-        public string Percentage { get; set; }
-        public string Commission { get; set; }
+        public double Percentage { get; set; }
+        public double Commission { get; set; }
     }
 }

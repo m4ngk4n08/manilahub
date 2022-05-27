@@ -1,13 +1,9 @@
 ﻿using manilahub.core.Services.IServices;
 using manilahub.data.Entity;
 using manilahub.data.Repository.IRepository;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
 using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Threading.Tasks;
-using System.Web.Mvc;
 
 namespace manilahub.core.Services
 {
@@ -30,7 +26,7 @@ namespace manilahub.core.Services
 
         public async Task<TransactionR> Withdrawal(TransactionR model)
         {
-            var userInfo = await _userRepository.GetById(model.UserId.ToString());
+            var userInfo = await _userRepository.GetById(model.UserId);
             var agentInfo = await _transactionRepository.GetByReferralCode(userInfo.ReferralCode is null ? null : userInfo.ReferralCode);
 
             if (userInfo != null || agentInfo != null)
@@ -85,7 +81,7 @@ namespace manilahub.core.Services
 
         public async Task<TransactionR> Deposit(TransactionR model)
         {
-            var userInfo = await _userRepository.GetById(model.UserId.ToString());
+            var userInfo = await _userRepository.GetById(model.UserId);
             var agentInfo = await _transactionRepository.GetByReferralCode(userInfo.ReferralCode is null ? null : userInfo.ReferralCode);
 
             if (userInfo != null || agentInfo != null)

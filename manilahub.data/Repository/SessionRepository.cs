@@ -22,7 +22,7 @@ namespace manilahub.data.Repository
         {
             var sql = @"select * from [dbo].Session where UserId = @userId and IsActive = 1";
 
-            return await _dbConnection.QueryAsync<Session>(sql, new { UserId = userId });
+            return await _dbConnection.QueryAsync<Session>(sql, new { UserId = userId }) ?? null;
         }
 
         public async Task<bool> Insert(Session entity)

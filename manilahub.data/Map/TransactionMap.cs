@@ -15,17 +15,23 @@ namespace manilahub.data.Map
             Map(j => j.UserId)
                 .ToColumn("UserId");
             Map(j => j.AgentId)
-                .ToColumn("AgentId");
+                .ToColumn("Agent_Id");
             Map(j => j.Username)
                 .ToColumn("Username");
             Map(j => j.Balance)
                 .ToColumn("Balance");
+            Map(j => j.ContactNumber)
+                .ToColumn("Contact_Number");
+            Map(j => j.Status)
+                .ToColumn("Status");
+            Map(j => j.Role)
+                .ToColumn("Role");
             Map(j => j.ReferralCode)
                 .ToColumn("Referral_Code");
             Map(j => j.Percentage)
                 .ToColumn("Percentage");
-            Map(j => j.Comission)
-                .ToColumn("Comission");
+            Map(j => j.Commission)
+                .ToColumn("Commission");
         }
     }
 }

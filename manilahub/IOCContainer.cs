@@ -4,6 +4,9 @@ using manilahub.core.Services;
 using manilahub.core.Services.IServices;
 using manilahub.data.Repository;
 using manilahub.data.Repository.IRepository;
+using manilahub.Middleware;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Microsoft.Extensions.Configuration;
 using System;
@@ -32,6 +35,7 @@ namespace manilahub
             builder.RegisterType<PlayerService>().As<IPlayerService>();
             builder.RegisterType<SessionService>().As<ISessionService>();
             builder.RegisterType<TransactionService>().As<ITransactionService>();
+            builder.RegisterType<BetServices>().As<IBetServices>();
 
             builder.RegisterType<RegisterRepository>().As<IRegisterRepository>();
             builder.RegisterType<LoginRepository>().As<ILoginRepository>();
@@ -40,8 +44,11 @@ namespace manilahub
             builder.RegisterType<AdminServices>().As<IAdminServices>();
             builder.RegisterType<AdminRepository>().As<IAdminRepository>();
             builder.RegisterType<TransactionRepository>().As<ITransactionRepository>();
+            builder.RegisterType<BetRepository>().As<IBetRepository>();
 
+            builder.RegisterType<HubMiddleware>().As<IAuthorizationHandler>();
             builder.RegisterType<ActionContextAccessor>().As<IActionContextAccessor>();
+            builder.RegisterType<LoggerManager>().As<ILoggerManager>();
 
             var connectionString = _configuration.GetSection("ConnectionString:APIConnection").Value;
             builder.Register<IDbConnection>(ctx => new SqlConnection(connectionString));

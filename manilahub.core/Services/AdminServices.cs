@@ -3,6 +3,7 @@ using manilahub.data.Entity;
 using manilahub.data.Enum;
 using manilahub.data.Repository.IRepository;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc.Infrastructure;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
@@ -13,23 +14,26 @@ namespace manilahub.core.Services
     {
         private readonly IAdminRepository _adminRepository;
         private readonly IUserRepository _userRepository;
+        private readonly IActionContextAccessor _actionContext;
         private readonly IHttpContextAccessor _httpContext;
         private static Random random = new Random();
 
         public AdminServices(
             IAdminRepository adminRepository,
             IUserRepository userRepository,
+            IActionContextAccessor actionContext,
             IHttpContextAccessor httpContext)
              
         {
             _adminRepository = adminRepository;
             _userRepository = userRepository;
+            _actionContext = actionContext;
             _httpContext = httpContext;
         }
 
         public async Task<bool> UpdateRole(Player model)
         {
-            var userInfo = await _userRepository.GetById(model.UserId.ToString());
+            var userInfo = await _userRepository.GetById(model.UserId);
             var agentInfo = await _userRepository.GetAgentInfo(userInfo.AgentId);
 
             var player = new Player
@@ -45,7 +49,7 @@ namespace manilahub.core.Services
             return true;
         }
 
-        public async Task<bool> Insert(Player model)
+        public async Task<bool> Promote(Player model)
         {
             try
             {
@@ -54,20 +58,23 @@ namespace manilahub.core.Services
                 switch (currentUserInfo.Role)
                 {
                     case RoleEnum.GOLD:
-                        if (userInfo.Role != RoleEnum.PLAYER)
+                        if (userInfo.Role is RoleEnum.GOLD || userInfo.Role is RoleEnum.OPERATOR || userInfo.Role is RoleEnum.MASTER)
                         {
+                            _actionContext.ActionContext.ModelState.AddModelError("error", "Unable to promote");
                             return false;
                         }
                         break;
                     case RoleEnum.MASTER:
-                        if (userInfo.Role != RoleEnum.PLAYER && userInfo.Role != RoleEnum.GOLD)
+                        if (userInfo.Role is RoleEnum.GOLD || userInfo.Role is RoleEnum.OPERATOR ||  userInfo.Role is RoleEnum.MASTER)
                         {
+                            _actionContext.ActionContext.ModelState.AddModelError("error", "Unable to promote");
                             return false;
                         }
                         break;
                     case RoleEnum.OPERATOR:
-                        if (userInfo.Role != RoleEnum.PLAYER && userInfo.Role != RoleEnum.GOLD && userInfo.Role != RoleEnum.MASTER)
+                        if (userInfo.Role is RoleEnum.MASTER || userInfo.Role is RoleEnum.OPERATOR)
                         {
+                            _actionContext.ActionContext.ModelState.AddModelError("error", "Unable to promote");
                             return false;
                         }
                         break;
@@ -79,23 +86,51 @@ namespace manilahub.core.Services
                         break;
                 }
 
-                var agent = new Agent
+                if (userInfo.Role is RoleEnum.PLAYER)
                 {
-                    ReferralCode = ReferralCode(),
-                    Percentage = Commission(model.Role)
-                };
+                    var agent = new Agent
+                    {
+                        ReferralCode = ReferralCode(),
+                        Percentage = Commission(model.Role)
+                    };
 
-                var agentId = await _adminRepository.Insert(agent);
+                    var agentId = await _adminRepository.Insert(agent);
 
-                var updateStatus = new Player
+                    var updateStatus = new Player
+                    {
+                        UserId = userInfo.UserId,
+                        AgentId = agentId,
+                        Role = model.Role,
+                        Status = StatusEnum.Approved
+                    };
+
+                    await _userRepository.UpdatePlayerStatus(updateStatus);
+                }
+                else
                 {
-                    UserId = userInfo.UserId,
-                    AgentId = agentId.ToString(),
-                    Role = model.Role,
-                    Status = StatusEnum.Approved
-                };
+                    int role = 0;
+                    switch (userInfo.Role)
+                    {
+                        case RoleEnum.GOLD:
+                            role = (int)RoleEnum.MASTER;
+                            break;
+                        case RoleEnum.MASTER:
+                            role = (int)RoleEnum.OPERATOR;
+                            break;
+                        default:
+                            return false;
+                    }
 
-                await _userRepository.UpdatePlayerStatus(updateStatus);
+                    var updateStatus = new Player
+                    {
+                        UserId = userInfo.UserId,
+                        AgentId = userInfo.AgentId,
+                        Role = (RoleEnum)role,
+                        Status = StatusEnum.Approved
+                    };
+
+                    await _userRepository.UpdatePlayerStatus(updateStatus);
+                }
 
                 return true;
             }
@@ -113,18 +148,18 @@ namespace manilahub.core.Services
                 .Select(s => s[random.Next(s.Length)]).ToArray());
         }
 
-        string Commission(RoleEnum role)
+        double Commission(RoleEnum role)
         {
             switch (role)
             {
                 case RoleEnum.GOLD:
-                    return "0.2";
+                    return 0.2;
                 case RoleEnum.MASTER:
-                    return "0.3";
+                    return 0.3;
                 case RoleEnum.OPERATOR:
-                    return "0.4";
+                    return 0.4;
                 default:
-                    return string.Empty;
+                    return 0;
             }
         }
     }

@@ -22,28 +22,34 @@ namespace manilahub.data.Repository
         {
             string sql = @"select * from [dbo].users where UPPER(TRIM(username)) = UPPER(TRIM(@Username))";
 
-            return await _dbConnection.QueryFirstOrDefaultAsync<Player>(sql, new { Username = username });
+            var returnVal =  await _dbConnection.QueryFirstOrDefaultAsync<Player>(sql, new { Username = username });
+
+            return returnVal ?? null;
         }
 
-        public async Task<Player> GetById(string userid)
+        public async Task<Player> GetById(int userid)
         {
             string sql = @"select * from [dbo].users where userid = @userid";
 
-            return await _dbConnection.QueryFirstOrDefaultAsync<Player>(sql, new { userid = Convert.ToInt32(userid) });
+            var returnVal = await _dbConnection.QueryFirstOrDefaultAsync<Player>(sql, new { userid = userid });
+
+            return returnVal ?? null;
         }
 
-        public async Task<Agent> GetAgentInfo(string agentid)
+        public async Task<Agent> GetAgentInfo(int agentid)
         {
             string sql = @"select * from [dbo].agents where agentid = @agentid";
 
-            return await _dbConnection.QueryFirstOrDefaultAsync<Agent>(sql, new { agentid = agentid });
+            var returnval = await _dbConnection.QueryFirstOrDefaultAsync<Agent>(sql, new { agentid = agentid });
+
+            return returnval ?? null;
         }
 
-        public IEnumerable<Player> GetAll()
+        public async Task<IEnumerable<Player>> GetAll()
         {
             var sql = @"select * from [dbo].users";
 
-            var returnVal = _dbConnection.Query<Player>(sql);
+            var returnVal = await _dbConnection.QueryAsync<Player>(sql);
 
             return returnVal ?? null;
         }
@@ -64,6 +70,18 @@ namespace manilahub.data.Repository
             int rowsAffected = await _dbConnection.ExecuteAsync(sql, parameters);
 
             return (rowsAffected > 0) ? entity : null;
+        }
+
+        public async Task<Agent> UpdateCommission(Agent entity)
+        {
+            var sql = @"update agents set commission = @commission where agentid = @agentid";
+
+            var parameters = new DynamicParameters();
+            parameters.AddDynamicParams(entity);
+
+            int rowsAffected = await _dbConnection.ExecuteAsync(sql, parameters);
+
+            return rowsAffected > 0 ? entity : null;
         }
     }
 }

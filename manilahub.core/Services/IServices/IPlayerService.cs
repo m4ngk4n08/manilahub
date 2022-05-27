@@ -9,8 +9,8 @@ namespace manilahub.core.Services.IServices
     public interface IPlayerService
     {
         Task<Player> Get(string username);
-        IEnumerable<Player> GetPendingStatus();
-
+        Task<IEnumerable<Player>> GetPendingStatus();
+        Task<IEnumerable<Transaction>> GetAllByReferralCode();
         Task<Player> UpdateStatus(Player model);
     }
 }

@@ -9,5 +9,7 @@ namespace manilahub.core.Services.IServices
     public interface ILoginService
     {
         Task<bool> Login(Login model);
+
+        Task<Player> GenerateJwt(Login model, string serverName);
     }
 }

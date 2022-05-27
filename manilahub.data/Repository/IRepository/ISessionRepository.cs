@@ -11,5 +11,7 @@ namespace manilahub.data.Repository.IRepository
         Task<IEnumerable<Session>> GetAllUserSession(string userId);
         Task<bool> Insert(Session entity);
         Task<bool> Logout(Session entity);
+
+        Task<bool> UpdateSession(Session entity);
     }
 }

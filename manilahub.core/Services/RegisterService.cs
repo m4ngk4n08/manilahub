@@ -1,10 +1,14 @@
 ﻿using manilahub.core.Services.IServices;
 using manilahub.data.Entity;
 using manilahub.data.Repository.IRepository;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc.Infrastructure;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace manilahub.core.Services
 {
@@ -12,32 +16,53 @@ namespace manilahub.core.Services
     {
         private readonly IRegisterRepository _registerRepository;
         private readonly ICryptographyService _cryptographyService;
-        private readonly IUserRepository _playerRepository;
+        private readonly IUserRepository _userRepository;
+        private readonly IHttpContextAccessor _httpContext;
+        private readonly IActionContextAccessor _actionContext;
 
         public RegisterService(
             IRegisterRepository registerRepository,
             ICryptographyService cryptographyService,
-            IUserRepository playerRepository)
+            IUserRepository userRepository,
+            IHttpContextAccessor httpContext,
+            IActionContextAccessor actionContext)
         {
             _registerRepository = registerRepository;
             _cryptographyService = cryptographyService;
-            _playerRepository = playerRepository;
+            _userRepository = userRepository;
+            _httpContext = httpContext;
+            _actionContext = actionContext;
         }
 
-        public bool Register(Player model)
+        public async Task<bool> Register(Player model)
         {
             try
             {
-                var user = _playerRepository.Get(model.Username);
+                var user = await _userRepository.Get(model.Username);
+                var getReferralCode = await _userRepository.Get(_httpContext.HttpContext.User.Identity.Name);
+                var getAgentInfo = await _userRepository.GetAgentInfo(getReferralCode.AgentId);
+                var getAllUser = await _userRepository.GetAll();
 
-                if (user is null)
+                if (getAllUser.ToList().Select(j => j.Username).Contains(model.Username))
+                {
+                    _actionContext.ActionContext.ModelState.AddModelError("error", "username already exist");
+                    return false;
+                }
+
+                //if (getAllUser.ToList().Select(j => j.ContactNumber).Contains(model.ContactNumber))
+                //{
+                //    _actionContext.ActionContext.ModelState.AddModelError("error", "contact number already exist");
+                //    return false;
+                //}
+
+                if (user is null || getReferralCode is null)
                 {
                     var newModel = new Player
                     {
                         Username = model.Username,
                         Password = _cryptographyService.SHA512(model.Password),
                         ContactNumber = model.ContactNumber,
-                        ReferralCode = model.ReferralCode
+                        ReferralCode = getAgentInfo.ReferralCode
                     };
 
                     return _registerRepository.Insert(newModel);

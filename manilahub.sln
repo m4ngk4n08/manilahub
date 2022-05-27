@@ -3,11 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.31702.278
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "manilahub", "manilahub\manilahub.csproj", "{8CB9ECA2-5DD1-4087-BBFF-0D8A409E6210}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "manilahub", "manilahub\manilahub.csproj", "{8CB9ECA2-5DD1-4087-BBFF-0D8A409E6210}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "manilahub.data", "manilahub.data\manilahub.data.csproj", "{3B650345-A228-480F-A2EA-52B2706F41D8}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "manilahub.data", "manilahub.data\manilahub.data.csproj", "{3B650345-A228-480F-A2EA-52B2706F41D8}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "manilahub.core", "manilahub.core\manilahub.core.csproj", "{F6980DFC-2AAE-474A-B64F-FE3EE5665A3A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "manilahub.core", "manilahub.core\manilahub.core.csproj", "{F6980DFC-2AAE-474A-B64F-FE3EE5665A3A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

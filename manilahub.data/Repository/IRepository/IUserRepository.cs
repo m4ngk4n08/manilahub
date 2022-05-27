@@ -9,9 +9,11 @@ namespace manilahub.data.Repository.IRepository
     public interface IUserRepository
     {
         Task<Player> Get(string username);
-        Task<Agent> GetAgentInfo(string id);
-        Task<Player> GetById(string id);
-        IEnumerable<Player> GetAll();
+        Task<Agent> GetAgentInfo(int id);
+        Task<Player> GetById(int id);
+        Task<IEnumerable<Player>> GetAll();
         Task<Player> UpdatePlayerStatus(Player entity);
+
+        Task<Agent> UpdateCommission(Agent entity);
     }
 }

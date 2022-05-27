@@ -8,7 +8,7 @@ namespace manilahub.core.Services.IServices
 {
     public interface IAdminServices
     {
-        Task<bool> Insert(Player model);
+        Task<bool> Promote(Player model);
 
         Task<bool> UpdateRole(Player model);
     }

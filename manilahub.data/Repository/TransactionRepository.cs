@@ -20,27 +20,30 @@ namespace manilahub.data.Repository
 
         public async Task<IEnumerable<Transaction>> GetAllByReferralCode(string referralCode)
         {
-            var sql = @"select a.UserId, a.Username, a.Referral_Code, a.balance, b.*
-                        from users a inner join agents b 
-                        on a.Agent_Id = b.AgentId
-                        where a.Referral_Code = @referralCode and a.Status != 1";
+            var sql = @"select a.* from users a 
+                        where a.Referral_Code = @Referral_Code and a.Status != 1";
 
             return await _dbConnection.QueryAsync<Transaction>(sql, new { Referral_Code = referralCode });
         }
 
         public async Task<Transaction> GetByReferralCode(string referralCode)
         {
-            var sql = @"select a.UserId, a.Username, a.Referral_Code, a.balance, b.*
+            var sql = @"select a.UserId, a.Username, a.Referral_Code, a.balance, b.agentid, b.commission, b.referral_code
                         from users a inner join agents b 
                         on a.Agent_Id = b.AgentId
                         where b.Referral_Code = @Referral_Code and a.Status != 1";
+            var returnVal = await _dbConnection.QueryFirstOrDefaultAsync<Transaction>(sql, new { Referral_Code = referralCode }) ?? null;
 
-            return await _dbConnection.QueryFirstOrDefaultAsync<Transaction>(sql, new { Referral_Code = referralCode });
+            return returnVal;
         }
 
         public async Task<bool> UpdateBalance(Transaction entity)
         {
-            var sql = @"update users set balance = @balance where userid = @userid";
+            var sql = @"update users 
+                        set 
+                            balance = @balance 
+                        where 
+                            userid = @userid";
 
             var parameters = new DynamicParameters();
             parameters.AddDynamicParams(entity);

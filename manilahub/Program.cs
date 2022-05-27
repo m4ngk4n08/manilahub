@@ -21,11 +21,11 @@ namespace manilahub
                 .ConfigureWebHostDefaults(webhostbuilder =>
                 {
                     webhostbuilder.UseContentRoot(Directory.GetCurrentDirectory())
+                    //.UseKestrel()
                     .UseIISIntegration()
                     .UseStartup<Startup>();
                 })
                 .Build();
-
             host.Run();
         }
 
